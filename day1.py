@@ -4,8 +4,8 @@ numbers = [int(line) for line in r.read().splitlines()]
 def findTwo():
     for i in range(len(numbers)):
         for j in range(len(numbers)):
-            if numbers[i] + numbers[j] + numbers[k] == 2020:
-                return numbers[i] * numbers[j] * numbers[k]
+            if numbers[i] + numbers[j] == 2020:
+                return numbers[i] * numbers[j]
 
 def findThree():
     for i in range(len(numbers)):
@@ -14,4 +14,5 @@ def findThree():
                 if numbers[i] + numbers[j] + numbers[k] == 2020:
                     return numbers[i] * numbers[j] * numbers[k]
 
+print(findTwo())
 print(findThree())
