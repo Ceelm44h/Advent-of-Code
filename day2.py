@@ -4,6 +4,7 @@ def formatInput(policy):
 
 def isValidOne(policy):
     policy, counter = formatInput(policy), 0
+    
     for ch in policy[3]:
         if ch == policy[2]:
             counter += 1
