@@ -1,4 +1,6 @@
-def getNumberOfAdjacent(x, y) -> int:
+FLOOR, EMPTY, OCCUPIED = '.', 'L', '#'
+
+def getNumberOfAdjacent(lines, x, y) -> int:
     sum = 0
     neighbours = [(x-1, y), (x, y-1), (x+1, y), (x, y+1), (x-1, y-1), (x+1, y-1), (x+1, y+1), (x-1, y+1)]
     for point in neighbours:
@@ -7,7 +9,7 @@ def getNumberOfAdjacent(x, y) -> int:
             
     return sum
 
-def getNumberOfSeen(x, y) -> int:
+def getNumberOfSeen(lines, x, y) -> int:
     sum = 0
     for i in range(-1, 2):
         for j in range(-1, 2):
@@ -27,52 +29,35 @@ def getNumberOfSeen(x, y) -> int:
                 indexY += j
     return sum
 
+def getFinalOccupied(lines, neighboursToEmpty, isPartOne):
+    numberOfOccupied = prevOccupied = 0
+    nextMap = list(lines)
+    while True:
+        for i in range(len(lines)):
+            for j in range(len(lines[i])):
+                if isPartOne == True:
+                    neighbours = getNumberOfAdjacent(lines, i, j)
+                else:
+                    neighbours = getNumberOfSeen(lines, i, j)
+
+                if lines[i][j] != FLOOR:
+                    if neighbours == 0 and lines[i][j] != OCCUPIED:
+                        nextMap[i] = nextMap[i][:j] + OCCUPIED + nextMap[i][j+1:]
+                        numberOfOccupied += 1
+                    elif neighbours >= neighboursToEmpty and lines[i][j] != EMPTY:
+                        nextMap[i] = nextMap[i][:j] + EMPTY + nextMap[i][j+1:]
+                        numberOfOccupied -= 1
+
+        if numberOfOccupied == prevOccupied:
+            break
+
+        prevOccupied = numberOfOccupied
+        lines = list(nextMap)
+
+    return numberOfOccupied
+
 file = open("day11_input.txt", "r")
 lines = file.read().splitlines()
-copy = list(lines)
 
-FLOOR, EMPTY, OCCUPIED = '.', 'L', '#'
-nextMap = list(lines)
-
-numberOfOccupied = prevOccupied = 0
-
-while True:
-    for i in range(len(lines)):
-        for j in range(len(lines[i])):
-            neighbours = getNumberOfAdjacent(i, j)
-            if lines[i][j] != FLOOR:
-                if neighbours == 0 and lines[i][j] != OCCUPIED:
-                    nextMap[i] = nextMap[i][:j] + OCCUPIED + nextMap[i][j+1:]
-                    numberOfOccupied += 1
-                elif neighbours >= 4 and lines[i][j] != EMPTY:
-                    nextMap[i] = nextMap[i][:j] + EMPTY + nextMap[i][j+1:]
-                    numberOfOccupied -= 1
-    if numberOfOccupied == prevOccupied:
-        break
-    prevOccupied = numberOfOccupied
-    lines = list(nextMap)
-
-print(numberOfOccupied)
-
-lines = list(copy)
-nextMap = list(lines)
-numberOfOccupied = prevOccupied = 0
-
-while True:
-    for i in range(len(lines)):
-        for j in range(len(lines[i])):
-            neighbours = getNumberOfSeen(i, j)
-            if lines[i][j] != FLOOR:
-                if neighbours == 0 and lines[i][j] != OCCUPIED:
-                    nextMap[i] = nextMap[i][:j] + OCCUPIED + nextMap[i][j+1:]
-                    numberOfOccupied += 1
-
-                elif neighbours >= 5 and lines[i][j] != EMPTY:
-                    nextMap[i] = nextMap[i][:j] + EMPTY + nextMap[i][j+1:]
-                    numberOfOccupied -= 1
-    if numberOfOccupied == prevOccupied:
-        break
-    prevOccupied = numberOfOccupied
-    lines = list(nextMap)
-    
-print(numberOfOccupied)
+print(getFinalOccupied(lines, 4, True))
+print(getFinalOccupied(lines, 5, False))
